@@ -12,7 +12,7 @@ export class UserController {
   @Post()
   async add(@Body() user: UserAddDto, @Res() response: Response) {
     const result = await this._userService.addAsync(user);
-    if(!!result)
+    if(result)
         response.status(HttpStatus.CREATED).send();
     else
         response.status(HttpStatus.BAD_REQUEST).send();
@@ -21,7 +21,7 @@ export class UserController {
   @Put()
   async update(@Body() user: UserUpdateDto, @Res() response: Response) {
     const result = await this._userService.updateAsync(user);
-    if(!!result)
+    if(result)
         response.status(HttpStatus.OK).send();
     else
         response.status(HttpStatus.NOT_FOUND).send();
@@ -30,7 +30,7 @@ export class UserController {
   @Delete()
   async delete(@Param() id: string, @Res() response: Response) {
     const result = await this._userService.removeAsync(id);
-    if(!!result)
+    if(result)
         response.status(HttpStatus.OK).send();
     else
         response.status(HttpStatus.NOT_FOUND).send();

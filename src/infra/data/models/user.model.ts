@@ -14,20 +14,4 @@ export class UserModel {
   createdAt: Date;
   @Column({ name: 'updatedAt', type: 'date' })
   updatedAt: Date;
-
-  constructor(user: User) {
-    this.id = user?.id;
-    this.name = user?.name;
-    this.email = user?.email;
-    this.createdAt = user?.createdAt;
-    this.updatedAt = user?.updatedAt;
-  }
-
-  toEntity = (): User => {
-    const user = new User(this.name, this.email, this.id);
-    user.createdAt = this.createdAt;
-    user.updatedAt = this.createdAt;
-
-    return user;
-  }
 }
