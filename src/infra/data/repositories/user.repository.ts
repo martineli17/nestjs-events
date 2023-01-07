@@ -3,9 +3,9 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { Repository } from 'typeorm';
 import { User } from 'src/domain/entities/user';
-import { IUserRepository } from 'src/domain/interfaces/repository/user';
+import { IUserRepository } from 'src/domain/interfaces/repository/user-repository.interface';
 import { UserModel } from '../models/user.model';
-import { getDataSource } from '../configuration/source';
+import { getDataSource } from '../configuration/app-data-source';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserRepository implements IUserRepository {

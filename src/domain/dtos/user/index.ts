@@ -1,5 +1,5 @@
-import { UserAddDto } from './user.add.dto';
-import { UserUpdateDto } from './user.update.dto';
+import { UserAddDto } from './user-add.dto';
+import { UserUpdateDto } from './user-update.dto';
 import { UserDto } from './user.dto';
 
 export {

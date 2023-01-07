@@ -1,7 +1,7 @@
 import { Body, Res, Controller, Get, Post, HttpStatus, Put, Delete, Param, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import { UserAddDto, UserUpdateDto } from 'src/domain/dtos/user';
-import { IUserService } from 'src/domain/interfaces/service/user';
+import { IUserService } from 'src/domain/interfaces/service/user-service.interface';
 import { UserService } from 'src/domain/services/user.service';
 
 @Controller('user')
