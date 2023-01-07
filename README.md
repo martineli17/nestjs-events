@@ -1,73 +1,40 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Utilizando eventos no NestJS
+Este repositório tem como objetivo exemplificar, de maneira simples, a utilização de eventos nativo do NestJS.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Pacotes a serem instalados
+O único pacote necessário a ser instalado é o [@nestjs/event-emitter](https://docs.nestjs.com/techniques/events)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Cenário de uso
+<p>Quando você quer desacoplar um pouco o seu código, deixando mais claro a responsabilidade de cada classe, você pode utilizar os eventos para sinalizar que algo foi processado e, assim, iniciar algum outro fluxo.</p>
+<p>Com isso, caso exista mais fluxos a serem executados ao enviar aquele evento, você precisará adicionar somente mais um handler para executar tal processamento.</p>
 
-## Description
+## Exemplo no código
+### [Emissor](https://github.com/martineli17/nestjs-events/blob/master/src/domain/services/user.service.ts)
+Para emitir um evento, é necessário utilizar o 'EventEmitter2'. Esta classe contém, dentre outros, o método responsável por enviar um novo evento. Os parâmetros necessário é o nome do evento e o seu payload.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
+```js
+import { EventEmitter2 } from '@nestjs/event-emitter';
+await this._eventEmitter.emitAsync("UserAddedEvent", { user: entity } as UserAddedEvent);
 ```
 
-## Running the app
+### [Handler | Listener](https://github.com/martineli17/nestjs-events/blob/master/src/domain/events/user/handlers/user-added.handler.ts)
+Para registrar um handler/listener para algum evento, é necessário utilizar o decorator '@OnEvent', informando obrigatoriamente o nome do evento desejado.
+Além disso, é necessário registrar a classe do handler na [Dependency Injection](https://github.com/martineli17/nestjs-events/blob/master/src/infra/ioc/modules/user.module.ts), para que ele seja registrado e consiga ser processado quando a classe emissora enviar o evento.
+Observação: caso você registre mais de um handler para o evento, todos serão processados.
 
-```bash
-# development
-$ npm run start
+```js
+import { Injectable } from "@nestjs/common";
+import { OnEvent } from "@nestjs/event-emitter";
+import { UserAddedEvent } from "../models";
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+@Injectable()
+export class UserAddedEventHandler {
+    @OnEvent("UserAddedEvent", { async: true })
+    handleUserAddedEvent(payload: UserAddedEvent) {
+        console.log("Usuário adicionado event. ID: " + payload.user.id);
+    }   
+}
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Mais informações
+Para mais informações, possibilidades de uso e especificações técnicas, acesse a página do [NestJS](https://docs.nestjs.com/techniques/events)
